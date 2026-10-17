@@ -77,19 +77,23 @@ class MainVm(app: Application) : AndroidViewModel(app) {
     var vbassOn by mutableStateOf(false)
     var vbassLvl by mutableIntStateOf(30)
 
-    private val btLink: BtLink = BtLink(
-        scope = viewModelScope,
-        onLine = { l -> viewModelScope.launch(Dispatchers.Main) { addLog(l) } },
-        onState = { st ->
-            viewModelScope.launch(Dispatchers.Main) {
-                link = st
-                if (st is LinkState.Connected) {
-                    addLog("[app] terhubung ke ${st.name}")
-                    btLink.send("status")
-                } else if (st is LinkState.Disconnected) addLog("[app] terputus")
-            }
-        },
-    )
+    private lateinit var btLink: BtLink
+
+    init {
+        btLink = BtLink(
+            scope = viewModelScope,
+            onLine = { l -> viewModelScope.launch(Dispatchers.Main) { addLog(l) } },
+            onState = { st ->
+                viewModelScope.launch(Dispatchers.Main) {
+                    link = st
+                    if (st is LinkState.Connected) {
+                        addLog("[app] terhubung ke ${st.name}")
+                        btLink.send("status")
+                    } else if (st is LinkState.Disconnected) addLog("[app] terputus")
+                }
+            },
+        )
+    }
 
     private fun addLog(s: String) {
         if (log.size > 400) repeat(100) { log.removeAt(0) }
