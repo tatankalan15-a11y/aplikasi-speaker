@@ -77,7 +77,7 @@ class MainVm(app: Application) : AndroidViewModel(app) {
     var vbassOn by mutableStateOf(false)
     var vbassLvl by mutableIntStateOf(30)
 
-    private val btLink = BtLink(
+    private val btLink: BtLink = BtLink(
         scope = viewModelScope,
         onLine = { l -> viewModelScope.launch(Dispatchers.Main) { addLog(l) } },
         onState = { st ->
