@@ -1,1 +1,3 @@
-
+<resources>
+    <style name="Theme.TasControl" parent="@android:style/Theme.Material.Light.NoActionBar" />
+</resources>
