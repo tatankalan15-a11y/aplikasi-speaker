@@ -1,1 +1,44 @@
+name: Build APK
 
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # diperlukan untuk membuat GitHub Release saat push tag
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Gradle 8.7 dipasang oleh action ini, jadi tidak perlu gradle-wrapper.jar di repo
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon
+
+      - name: Ganti nama APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk TAS5805M-Control.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TAS5805M-Control-apk
+          path: TAS5805M-Control.apk
+
+      - name: Rilis (hanya saat push tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TAS5805M-Control.apk
