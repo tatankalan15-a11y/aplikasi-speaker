@@ -101,13 +101,13 @@ class MainVm(app: Application) : AndroidViewModel(app) {
         // baris dari perintah 'all': "AUDIO_MODE=1 (2 chip 2.1) | ..."
         val m = Regex("AUDIO_MODE=(\\d)").find(s)
         if (m != null) {
-            AudioMode.from(m.groupValues[1].toInt())?.let { setMode(it); addLog("[app] mode terdeteksi: ${it.label}") }
+            AudioMode.from(m.groupValues[1].toInt())?.let { selectMode(it); addLog("[app] mode terdeteksi: ${it.label}") }
             detecting = false
         }
     }
 
     /** Pilih mode manual / hasil deteksi. Disimpan di HP. Nilai slider 2.1 diset ke default firmware (150 Hz, aktif). */
-    fun setMode(m: AudioMode) {
+    fun selectMode(m: AudioMode) {
         mode = m
         prefs.edit().putInt("mode", m.code).apply()
         spaceOn = false; vbassOn = false
@@ -150,7 +150,7 @@ class MainVm(app: Application) : AndroidViewModel(app) {
     fun xoverApply() { xoverOn = true; send("xover $xoverHz") }
     fun xoverOff() { xoverOn = false; send("xover off") }
     fun commitSubVol() = send("subvol $subVol")
-    fun setSubInvert(v: Boolean) { subInvert = v; send("subpol ${if (v) 1 else 0}") }
+    fun applySubInvert(v: Boolean) { subInvert = v; send("subpol ${if (v) 1 else 0}") }
     fun setSpace(on: Boolean) { spaceOn = on; send(if (on) "space on" else "space off") }
     fun commitSpace() = send("space $spaceLvl")
     fun setVbass(on: Boolean) { vbassOn = on; send(if (on) "vbass on" else "vbass off") }

@@ -227,7 +227,7 @@ fun AudioTab(vm: MainVm, mode: AudioMode) {
         Section("Mode perangkat", "Harus sama dengan firmware yang di-flash. Salah mode = fitur tertentu ditolak firmware.") {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AudioMode.entries.forEach { m ->
-                    FilterChip(selected = mode == m, onClick = { vm.setMode(m) }, label = { Text(m.label) })
+                    FilterChip(selected = mode == m, onClick = { vm.selectMode(m) }, label = { Text(m.label) })
                 }
             }
             OutlinedButton(onClick = vm::detectMode, enabled = !vm.detecting) {
@@ -322,7 +322,7 @@ fun SubTab(vm: MainVm, mode: AudioMode) {
         }
         Section("Subwoofer", "Volume sub dan polaritas. Balik polaritas bila bass terdengar tipis di sekitar titik crossover.") {
             IntSlider("Volume sub", vm.subVol, 0..100, "%", { vm.subVol = it }, vm::commitSubVol)
-            SwitchRow("Polaritas terbalik", vm.subInvert, vm::setSubInvert)
+            SwitchRow("Polaritas terbalik", vm.subInvert, vm::applySubInvert)
             if (twoChip) OutlinedButton(onClick = { vm.send("substatus") }) { Text("Status chip sub") }
         }
         if (twoChip) {
@@ -378,7 +378,7 @@ fun ModePicker(vm: MainVm) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(m.label, style = MaterialTheme.typography.titleMedium)
                     Text(m.detail, style = MaterialTheme.typography.bodySmall)
-                    Button(onClick = { vm.setMode(m) }) { Text("Pakai mode ini") }
+                    Button(onClick = { vm.selectMode(m) }) { Text("Pakai mode ini") }
                 }
             }
         }
